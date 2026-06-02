@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healing Budget Planner - Anti Bokek Era</title>
+    <!-- Tailwind CSS for modern design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        /* Custom scrollbar hiding */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 pb-12">
+
+    <!-- Header Area -->
+    <header class="max-w-6xl mx-auto px-4 pt-8 pb-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-violet-100 to-pink-100 p-6 rounded-3xl border border-violet-200 shadow-sm">
+            <div>
+                <span class="px-3 py-1 bg-violet-200 text-violet-700 text-xs font-semibold rounded-full uppercase tracking-wider">✈️ Healing Era Planner</span>
+                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mt-2 text-slate-900">
+                    Budgeting Liburan <span class="gradient-text">Anti Bokek</span>
+                </h1>
+                <p class="text-slate-600 text-sm mt-1">Uang bisa dicari, healing keburu basi. Mari kita hitung damage-nya! ✨</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button onclick="exportToExcel()" class="bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-bold text-sm px-5 py-3 rounded-2xl shadow-lg transition-all duration-200 flex items-center gap-2 transform active:scale-95">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Download Excel Estetik ✨
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+        
+        <!-- Left Column: Key Stats, Sliders & AI Feature Hub -->
+        <div class="lg:col-span-1 space-y-6">
+            
+            <!-- Vibe Check Card -->
+            <div id="vibe-card" class="p-6 rounded-3xl transition-all duration-300 shadow-sm border">
+                <h3 class="text-xs font-bold uppercase tracking-wider opacity-80" id="vibe-title">Current Financial Vibe</h3>
+                <div class="text-2xl font-black mt-2 flex items-center gap-2" id="vibe-status">
+                    <!-- Dynamic -->
+                </div>
+                <p class="text-xs mt-2 opacity-90" id="vibe-desc">
+                    <!-- Dynamic -->
+                </p>
+                <div class="w-full bg-black/10 rounded-full h-2.5 mt-4">
+                    <div id="vibe-bar" class="h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs mt-1 font-medium opacity-80">
+                    <span id="vibe-percent">0% used</span>
+                    <span id="vibe-remaining">Sisa Rp0</span>
+                </div>
+            </div>
+
+            <!-- Damage Summary Card -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+                <div>
+                    <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Total Damage (Pengeluaran)</span>
+                    <div class="text-3xl font-black text-slate-900 mt-1" id="total-damage">Rp0</div>
+                </div>
+                
+                <hr class="border-slate-200">
+
+                <!-- Target Budget Input -->
+                <div>
+                    <label for="budget-limit" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Batas Aman Dompet (Limit)</label>
+                    <div class="relative rounded-2xl shadow-sm">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <span class="text-slate-400 font-semibold text-sm">Rp</span>
+                        </div>
+                        <input type="number" id="budget-limit" value="3500000" oninput="calculateBudget()" class="block w-full rounded-2xl border-slate-200 pl-10 pr-4 py-3 text-slate-900 placeholder-slate-400 focus:border-violet-500 focus:ring-violet-500 font-semibold text-sm bg-slate-50/50" placeholder="Contoh: 3,000,000">
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Sesuaikan budget maksimal biar pas pulang gak langsung makan promag.</p>
+                </div>
+            </div>
+
+            <!-- ✨ NEW: GEMINI AI HUBS (Unified Tab Card) -->
+            <div class="bg-gradient-to-br from-violet-600 via-fuchsia-600 to-pink-500 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -right-10 -top-10 opacity-10 pointer-events-none">
+                    <svg class="w-40 h-40 fill-white" viewBox="0 0 24 24">
+                        <path d="M12 2c-.07 0-.13.01-.2.02l-1.35.34c-1.39.35-2.61 1.25-3.39 2.5l-.26.43a6.836 6.836 0 0 0-.61 4.54l.32 1.95c.08.51.04 1.03-.12 1.52l-.63 1.9c-.39 1.18-.31 2.47.24 3.59l.52 1.04c.59 1.18 1.66 2.03 2.94 2.34l1.97.48c.51.12 1.04.12 1.55 0l1.97-.48c1.28-.31 2.35-1.16 2.94-2.34l.52-1.04c.55-1.12.63-2.41.24-3.59l-.63-1.9c-.16-.49-.2-1.01-.12-1.52l.32-1.95a6.836 6.836 0 0 0-.61-4.54l-.26-.43c-.78-1.25-2-2.15-3.39-2.5l-1.35-.34C12.13 2.01 12.07 2 12 2z"/>
+                    </svg>
+                </div>
+
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-[10px] bg-white/20 text-white font-bold px-2.5 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm">🤖 Gemini AI Hub</span>
+                    <span class="text-xs">✨</span>
+                </div>
+
+                <!-- Tab Headers -->
+                <div class="flex border-b border-white/20 pb-2 mb-4 overflow-x-auto gap-3 scrollbar-none">
+                    <button onclick="switchAITab('roast')" id="tab-roast-btn" class="text-xs font-bold border-b-2 border-white pb-1 whitespace-nowrap transition-all">🌶️ Roaster</button>
+                    <button onclick="switchAITab('planner')" id="tab-planner-btn" class="text-xs font-bold border-b-2 border-transparent pb-1 whitespace-nowrap opacity-60 hover:opacity-100 transition-all">🌴 Planner</button>
+                    <button onclick="switchAITab('bargain')" id="tab-bargain-btn" class="text-xs font-bold border-b-2 border-transparent pb-1 whitespace-nowrap opacity-60 hover:opacity-100 transition-all">🤝 Tawar AI</button>
+                    <button onclick="switchAITab('washare')" id="tab-washare-btn" class="text-xs font-bold border-b-2 border-transparent pb-1 whitespace-nowrap opacity-60 hover:opacity-100 transition-all">💬 Tagih Bestie</button>
+                </div>
+
+                <!-- Tab 1: AI Roaster -->
+                <div id="tab-roast-content" class="space-y-4">
+                    <p class="text-xs text-purple-100">AI akan menganalisis gaya hidup dan budget healing-mu secara kritis & seru!</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[9px] font-bold text-purple-200 uppercase mb-1">Gaya Respon</label>
+                            <select id="ai-style" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs rounded-xl px-2 py-2 focus:outline-none transition-all">
+                                <option value="roast" class="text-slate-950">Roast Pedas 🌶️</option>
+                                <option value="bestie" class="text-slate-950">Bestie Emosional 💖</option>
+                                <option value="wisdom" class="text-slate-950">Saran Bijaksana 🧠</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-purple-200 uppercase mb-1">Karakter Suara</label>
+                            <select id="voice-select" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold text-xs rounded-xl px-2 py-2 focus:outline-none transition-all">
+                                <option value="Leda" class="text-slate-950">Leda 👧 (Ceria)</option>
+                                <option value="Kore" class="text-slate-950">Kore 👦 (Gaul)</option>
+                                <option value="Zephyr" class="text-slate-950">Zephyr 🍃 (Santai)</option>
+                                <option value="Charon" class="text-slate-950">Charon 🎙️ (Formal)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="getAIVibeCheck()" id="ai-btn" class="w-full bg-white hover:bg-purple-50 text-purple-700 font-bold text-xs py-3 px-4 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-1.5">
+                        <span>Vibe Check Budgetku ✨</span>
+                    </button>
+
+                    <!-- AI Response Area -->
+                    <div id="ai-response-container" class="hidden mt-4 pt-4 border-t border-white/20 text-xs space-y-3 bg-black/15 p-3 rounded-2xl">
+                        <div id="ai-output" class="prose prose-invert max-w-none text-purple-50 leading-relaxed font-medium"></div>
+                        <div class="flex justify-end pt-2 border-t border-white/10">
+                            <button onclick="speakAIResponse()" id="speak-btn" class="bg-white/25 hover:bg-white/35 text-white font-bold text-[10px] px-3 py-2 rounded-xl flex items-center gap-1 transition-all transform active:scale-95">
+                                <span id="speak-icon">🔊</span> <span id="speak-text">Dengar Suara AI ✨</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: AI Planner -->
+                <div id="tab-planner-content" class="hidden space-y-4">
+                    <p class="text-xs text-purple-100">Ketik destinasi impianmu, Gemini AI akan menyusun daftar pengeluaran otomatis.</p>
+                    <div>
+                        <label for="trip-prompt" class="block text-[10px] font-bold text-purple-200 uppercase mb-1">Rencana Liburan</label>
+                        <input type="text" id="trip-prompt" class="block w-full rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-white placeholder-purple-200 focus:outline-none focus:ring-2 focus:ring-white font-semibold text-xs" placeholder="Contoh: Backpacker Yogyakarta 3D2N">
+                    </div>
+                    <button onclick="generateAITripPlan()" id="ai-planner-btn" class="w-full bg-white hover:bg-purple-50 text-purple-700 font-bold text-xs py-3 px-4 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-1.5">
+                        <span>Buat Budget Otomatis ✨</span>
+                    </button>
+                </div>
+
+                <!-- Tab 3: AI Bargain Simulator (Simulasi Tawar Harga) -->
+                <div id="tab-bargain-content" class="hidden space-y-4">
+                    <p class="text-xs text-purple-100">Pilih salah satu pengeluaranmu lalu tawar harganya langsung dengan AI penjual!</p>
+                    
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[9px] font-bold text-purple-200 uppercase mb-1">Pilih Item untuk Ditawar</label>
+                            <select id="bargain-item-select" class="w-full bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-xl px-2 py-2 focus:outline-none">
+                                <!-- Dynamic -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-purple-200 uppercase mb-1">Kalimat Tawaranmu (Tawar Sadis/Sopan)</label>
+                            <input type="text" id="bargain-message" class="block w-full rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-white placeholder-purple-200 focus:outline-none font-semibold text-xs" placeholder="Contoh: Kurangin dikit dong pak biar pas di kantong mahasiswa">
+                        </div>
+                    </div>
+
+                    <button onclick="negotiateWithAI()" id="bargain-btn" class="w-full bg-white hover:bg-purple-50 text-purple-700 font-bold text-xs py-2.5 px-4 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-1.5">
+                        <span>Tawar Harga AI ✨</span>
+                    </button>
+
+                    <!-- Chat Box Hasil Nego -->
+                    <div id="bargain-chat-container" class="hidden pt-3 border-t border-white/20 text-xs space-y-3 bg-black/15 p-3 rounded-2xl">
+                        <div class="flex items-center justify-between text-[10px] text-purple-200">
+                            <span id="bargain-vendor-mood">Mood: Biasa Saja</span>
+                            <span class="font-bold text-white" id="bargain-new-price-label"></span>
+                        </div>
+                        <p id="bargain-reply" class="text-purple-50 italic leading-relaxed font-medium"></p>
+                        
+                        <button onclick="applyBargainPrice()" id="apply-bargain-btn" class="hidden w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] py-2 px-3 rounded-lg transition-all transform active:scale-95 items-center justify-center gap-1">
+                            <span>Terapkan Harga Baru ke Tabel ✨</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 4: AI WA Share (Tagih Bestie) -->
+                <div id="tab-washare-content" class="hidden space-y-4">
+                    <p class="text-xs text-purple-100">Bikin draf tagihan patungan (split bill) yang lucu dan pas buat di-share ke grup chat WhatsApp.</p>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[9px] font-bold text-purple-200 uppercase mb-1">Jumlah Teman (Orang)</label>
+                            <input type="number" id="split-people" value="4" min="1" class="w-full bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-xl px-2 py-2 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] font-bold text-purple-200 uppercase mb-1">Nama Grup/Trip</label>
+                            <input type="text" id="split-trip-name" value="Rombongan Healing" class="w-full bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-xl px-2 py-2 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <button onclick="generateWAShareDraft()" id="washare-btn" class="w-full bg-white hover:bg-purple-50 text-purple-700 font-bold text-xs py-2.5 px-4 rounded-xl shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-1.5">
+                        <span>Buat Draf Pesan WA ✨</span>
+                    </button>
+
+                    <div id="washare-container" class="hidden pt-3 border-t border-white/20 text-xs space-y-3 bg-black/15 p-3 rounded-2xl">
+                        <textarea id="washare-text" readonly class="w-full h-32 bg-transparent text-purple-50 border-0 outline-none text-xs scrollbar-none resize-none font-medium leading-relaxed"></textarea>
+                        <button onclick="copyWAText()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold text-[11px] py-2 px-3 rounded-lg transition-all transform active:scale-95 flex items-center justify-center gap-1">
+                            <span>Salin Draf Pesan WA ✨</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Gen Z Wisdom / Quotes -->
+            <div class="bg-gradient-to-br from-indigo-900 to-slate-900 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                <!-- Tambah pointer-events-none agar tidak menghalangi tombol di depannya -->
+                <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
+                    <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                </div>
+                <span class="text-[10px] bg-indigo-500/30 text-indigo-300 font-bold px-2 py-0.5 rounded-full uppercase relative z-10">Self Reminder ✨</span>
+                <p class="italic text-sm font-medium mt-3 relative z-10" id="quote-box">"Duit bisa dicari lagi, tapi vibes nongkrong estetik sore ini ga bakal keulang bro."</p>
+                <div class="mt-4 flex justify-between items-center relative z-10">
+                    <span class="text-[11px] text-slate-400">— Financial Advisor Gen Z</span>
+                    <!-- z-10 ditambahkan agar tombol selalu diposisikan di atas SVG latar belakang -->
+                    <button onclick="newQuote()" class="relative z-10 text-xs text-indigo-300 hover:text-white transition-colors">Acak Quote 🎲</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Interactive Spreadsheet / Table -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Table Card -->
+            <div class="glass-card rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900">Daftar Pengeluaran</h2>
+                        <p class="text-xs text-slate-500 mt-1">Ubah nominal atau tambah list sesukamu, hitungan langsung sinkron!</p>
+                    </div>
+                    <button onclick="addNewRow()" class="bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md transition-all duration-200 flex items-center gap-1.5 transform active:scale-95">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"></path></svg>
+                        Tambah List Baru
+                    </button>
+                </div>
+
+                <!-- Interactive Excel-like Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                <th class="py-4 px-6 w-[35%]">Item & Vibes</th>
+                                <th class="py-4 px-6 w-[20%]">Kategori</th>
+                                <th class="py-4 px-6 w-[35%]">Jumlah Damage (Rupiah)</th>
+                                <th class="py-4 px-6 w-[10%] text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="budget-items-body" class="divide-y divide-slate-100 text-sm">
+                            <!-- Dynamic Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="p-4 bg-slate-50/50 border-t border-slate-100 flex justify-end text-xs text-slate-400">
+                    💡 Tip: Masukkan angka murni tanpa titik/koma (Contoh: 1240000).
+                </div>
+            </div>
+
+            <!-- Category Breakdown Chart (Modern Visual Bars) -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4">Persentase Alokasi Dana</h3>
+                <div class="space-y-4" id="category-bars">
+                    <!-- Dynamic Progress Bars -->
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Simple Custom Modal Alert (Replaces window.alert) -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl border border-slate-100">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto text-2xl" id="modal-icon">🎉</div>
+            <h3 class="text-lg font-bold text-slate-900 mt-4" id="modal-title">Berhasil!</h3>
+            <p class="text-sm text-slate-500 mt-2" id="modal-desc">Pesan berhasil disimpan.</p>
+            <button onclick="closeModal()" class="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-2xl transition-all">Sip, Mantap</button>
+        </div>
+    </div>
+
+    <!-- Script Section -->
+    <script>
+        // Initial Budget Items directly parsed from User input
+        let budgetItems = [
+            { id: 1, name: "Transport PP (Pergi Pulang)", category: "Transport", amount: 1240000 },
+            { id: 2, name: "Makan & Jajan Aesthetic", category: "Konsumsi", amount: 700000 },
+            { id: 3, name: "Sewa Mobil (Roadtrip Vibes)", category: "Transport", amount: 500000 },
+            { id: 4, name: "Penginapan / Staycation Nyaman", category: "Akomodasi", amount: 400000 }
+        ];
+
+        const quotes = [
+            "\"Uang bisa dicari lagi, tapi vibes nongkrong estetik sore ini ga bakal keulang bro.\"",
+            "\"Hemat itu bagus, tapi kalau gak healing nanti malah tipes pikiran. Berangkat!\"",
+            "\"Jangan biarkan saldo menghentikan mimpimu untuk flexing di Insta Story.\"",
+            "\"Setidaknya kalau bokek di rumah, kita punya memori estetik pas liburan kemarin.\"",
+            "\"Kerja terus sampai bisa checkout villa tanpa liat price tags. Untuk sekarang, dihitung dulu ya.\"",
+            "\"Ingat prinsip: Healing sekarang, pusing pas tanggal tua nanti (jangan ya dek!)\"",
+            "\"Investasi terbaik adalah kenangan indah, tapi jangan lupa bayar paylaternya tepat waktu.\""
+        ];
+
+        // Format number to IDR Currency style
+        function formatIDR(num) {
+            return "Rp " + Number(num).toLocaleString('id-ID');
+        }
+
+        // Generate dynamic table rows
+        function renderTable() {
+            const tbody = document.getElementById('budget-items-body');
+            tbody.innerHTML = '';
+
+            budgetItems.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-4 px-6">
+                        <input type="text" value="${item.name}" onchange="updateItemName(${item.id}, this.value)" class="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-violet-500 focus:outline-none font-semibold text-slate-800 py-1 transition-all">
+                    </td>
+                    <td class="py-4 px-6">
+                        <select onchange="updateItemCategory(${item.id}, this.value)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-1.5 px-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 transition-all">
+                            <option value="Transport" ${item.category === 'Transport' ? 'selected' : ''}>🚗 Transport</option>
+                            <option value="Akomodasi" ${item.category === 'Akomodasi' ? 'selected' : ''}>🏨 Akomodasi</option>
+                            <option value="Konsumsi" ${item.category === 'Konsumsi' ? 'selected' : ''}>🍕 Konsumsi</option>
+                            <option value="Hiburan" ${item.category === 'Hiburan' ? 'selected' : ''}>🎡 Hiburan</option>
+                            <option value="Lainnya" ${item.category === 'Lainnya' ? 'selected' : ''}>📦 Lainnya</option>
+                        </select>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-400 font-semibold text-sm">Rp</span>
+                            <input type="number" value="${item.amount}" oninput="updateItemAmount(${item.id}, this.value)" class="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-violet-500 focus:outline-none font-bold text-slate-800 py-1 transition-all" placeholder="0">
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <button onclick="deleteItem(${item.id})" class="text-red-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-all inline-flex justify-center items-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update bargain select dropdown
+            populateBargainSelect();
+        }
+
+        // Populates bargain select dropdown options
+        function populateBargainSelect() {
+            const select = document.getElementById('bargain-item-select');
+            if (select) {
+                select.innerHTML = '';
+                budgetItems.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.className = "text-slate-950";
+                    opt.innerText = `${item.name} (${formatIDR(item.amount)})`;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        // Update handlers
+        function updateItemName(id, val) {
+            const item = budgetItems.find(i => i.id === id);
+            if (item) {
+                item.name = val;
+                populateBargainSelect();
+            }
+        }
+
+        function updateItemCategory(id, val) {
+            const item = budgetItems.find(i => i.id === id);
+            if (item) {
+                item.category = val;
+                calculateBudget();
+            }
+        }
+
+        function updateItemAmount(id, val) {
+            const item = budgetItems.find(i => i.id === id);
+            if (item) {
+                item.amount = Number(val) || 0;
+                calculateBudget();
+            }
+        }
+
+        // Add item row
+        function addNewRow() {
+            const newId = budgetItems.length > 0 ? Math.max(...budgetItems.map(i => i.id)) + 1 : 1;
+            budgetItems.push({
+                id: newId,
+                name: "☕ Kopi Senja & Nongkrong",
+                category: "Konsumsi",
+                amount: 150000
+            });
+            renderTable();
+            calculateBudget();
+        }
+
+        // Delete item
+        function deleteItem(id) {
+            budgetItems = budgetItems.filter(item => item.id !== id);
+            renderTable();
+            calculateBudget();
+        }
+
+        // Calculate and refresh stats
+        function calculateBudget() {
+            const total = budgetItems.reduce((acc, curr) => acc + curr.amount, 0);
+            const limit = Number(document.getElementById('budget-limit').value) || 0;
+            
+            // Render Total Damage
+            document.getElementById('total-damage').innerText = formatIDR(total);
+
+            // Compute percentage & status
+            const percent = limit > 0 ? Math.min((total / limit) * 100, 150) : 0;
+            const remaining = limit - total;
+
+            document.getElementById('vibe-percent').innerText = `${Math.round(percent)}% used`;
+            document.getElementById('vibe-remaining').innerText = remaining >= 0 ? `Sisa Aman: ${formatIDR(remaining)}` : `Over limit: ${formatIDR(Math.abs(remaining))}`;
+
+            const vibeCard = document.getElementById('vibe-card');
+            const vibeStatus = document.getElementById('vibe-status');
+            const vibeDesc = document.getElementById('vibe-desc');
+            const vibeBar = document.getElementById('vibe-bar');
+
+            vibeBar.style.width = `${Math.min(percent, 100)}%`;
+
+            // Style vibe check based on spending levels
+            if (percent <= 50) {
+                vibeCard.className = "p-6 rounded-3xl transition-all duration-300 shadow-sm border bg-emerald-50 border-emerald-200 text-emerald-900";
+                vibeStatus.innerHTML = `<span>Aman Sentosa</span> <span class="text-xl">😎</span>`;
+                vibeDesc.innerText = "Dompet masih tebel, bensin aman, mau mampir beli es kopi susu boba ukuran large juga gaskeun!";
+                vibeBar.className = "h-2.5 rounded-full bg-emerald-500 transition-all duration-500";
+            } else if (percent > 50 && percent <= 85) {
+                vibeCard.className = "p-6 rounded-3xl transition-all duration-300 shadow-sm border bg-amber-50 border-amber-200 text-amber-950";
+                vibeStatus.innerHTML = `<span>Mulai Was-Was</span> <span class="text-xl">🫣</span>`;
+                vibeDesc.innerText = "Agak rem dikit kak jajannya. Jangan lapar mata di toko oleh-oleh biar pulangnya gak boncos.";
+                vibeBar.className = "h-2.5 rounded-full bg-amber-500 transition-all duration-500";
+            } else if (percent > 85 && percent <= 100) {
+                vibeCard.className = "p-6 rounded-3xl transition-all duration-300 shadow-sm border bg-orange-50 border-orange-200 text-orange-950";
+                vibeStatus.innerHTML = `<span>Indomie Era</span> <span class="text-xl">🍜</span>`;
+                vibeDesc.innerText = "Otw mode hemat maksimal! Besok makannya mie instan seduh di minimarket aja ya biar dompet gak meledak.";
+                vibeBar.className = "h-2.5 rounded-full bg-orange-500 transition-all duration-500";
+            } else {
+                vibeCard.className = "p-6 rounded-3xl transition-all duration-300 shadow-sm border bg-red-50 border-red-200 text-red-950 animate-pulse";
+                vibeStatus.innerHTML = `<span>DOMPET KRITIS!</span> <span class="text-xl">😭🚨</span>`;
+                vibeDesc.innerText = "HEALING JADI HURTING! Saldo kamu terkuras melebihi limit. Segera turunkan gengsi dan coret pengeluaran tidak penting!";
+                vibeBar.className = "h-2.5 rounded-full bg-red-500 transition-all duration-500";
+            }
+
+            renderCategoryBreakdown(total);
+        }
+
+        // Category breakdown progress bars
+        function renderCategoryBreakdown(total) {
+            const categories = {
+                "Transport": { amount: 0, icon: "🚗", color: "bg-blue-500" },
+                "Akomodasi": { amount: 0, icon: "🏨", color: "bg-purple-500" },
+                "Konsumsi": { amount: 0, icon: "🍕", color: "bg-emerald-500" },
+                "Hiburan": { amount: 0, icon: "🎡", color: "bg-pink-500" },
+                "Lainnya": { amount: 0, icon: "📦", color: "bg-slate-400" },
+            };
+
+            budgetItems.forEach(item => {
+                if (categories[item.category]) {
+                    categories[item.category].amount += item.amount;
+                } else {
+                    categories["Lainnya"].amount += item.amount;
+                }
+            });
+
+            const container = document.getElementById('category-bars');
+            container.innerHTML = '';
+
+            Object.keys(categories).forEach(key => {
+                const cat = categories[key];
+                const pct = total > 0 ? (cat.amount / total) * 100 : 0;
+
+                if (cat.amount > 0) {
+                    const div = document.createElement('div');
+                    div.className = "space-y-1";
+                    div.innerHTML = `
+                        <div class="flex justify-between text-xs font-semibold">
+                            <span class="text-slate-600">${cat.icon} ${key}</span>
+                            <span class="text-slate-900">${formatIDR(cat.amount)} (${Math.round(pct)}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2">
+                            <div class="${cat.color} h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        // Gen Z Quotes Box
+        function newQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            document.getElementById('quote-box').innerText = quotes[randomIndex];
+        }
+
+        // Custom Modal Controller
+        function showModal(title, desc, isError = false) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            const icon = document.getElementById('modal-icon');
+            if (isError) {
+                icon.innerText = "❌";
+                icon.className = "w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto text-2xl";
+            } else {
+                icon.innerText = "🎉";
+                icon.className = "w-16 h-16 bg-emerald-100 text-emerald-500 rounded-full flex items-center justify-center mx-auto text-2xl";
+            }
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Export to Styled Excel Sheet (.xls) with Gorgeous UI Theme Matches Landing Page
+        function exportToExcel() {
+            const headerBg = "#7c3aed"; // Violet 600
+            const headerText = "#ffffff";
+            const accentColor = "#db2777"; // Pink 600
+            const rowBgEven = "#f8fafc"; // Slate 50
+            const rowBgOdd = "#ffffff";
+            const borderStyle = "1px solid #e2e8f0";
+
+            let html = `
+            <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+            <head>
+                <!--[if gte mso 9]>
+                <xml>
+                    <x:ExcelWorkbook>
+                        <x:ExcelWorksheets>
+                            <x:ExcelWorksheet>
+                                <x:Name>Budget Healing</x:Name>
+                                <x:WorksheetOptions>
+                                    <x:DisplayGridlines/>
+                                </x:WorksheetOptions>
+                            </x:ExcelWorksheet>
+                        </x:ExcelWorkbook>
+                    </xml>
+                </xml>
+                <![endif]-->
+                <meta charset="utf-8">
+                <style>
+                    table { border-collapse: collapse; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+                    th { background-color: ${headerBg}; color: ${headerText}; font-weight: bold; padding: 12px; border: ${borderStyle}; text-align: left; }
+                    td { padding: 10px; border: ${borderStyle}; font-size: 13px; color: #334155; }
+                    .title { font-size: 18px; font-weight: bold; color: #1e1b4b; padding: 15px 0; text-align: center; }
+                    .total-label { font-weight: bold; text-align: right; background-color: #f1f5f9; color: #0f172a; }
+                    .total-value { font-weight: bold; color: ${accentColor}; background-color: #f1f5f9; text-align: right; }
+                    .meta-label { font-weight: bold; color: #64748b; font-size: 11px; }
+                    .meta-value { color: #334155; font-size: 11px; }
+                </style>
+            </head>
+            <body>
+                <table>
+                    <tr>
+                        <td colspan="4" class="title" style="background-color: #f5f3ff; color: #7c3aed; font-size: 16px; border: ${borderStyle};">✨ HEALING BUDGET PLANNER - ANTI BOKEK ERA ✨</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-label">Dibuat Pada:</td>
+                        <td class="meta-value" colspan="3">${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-label">Batas Aman Dompet (Limit):</td>
+                        <td class="meta-value" colspan="3" style="color: #16a34a; font-weight: bold;">Rp ${Number(document.getElementById('budget-limit').value).toLocaleString('id-ID')}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="height: 10px;"></td>
+                    </tr>
+                    <tr style="background-color: ${headerBg};">
+                        <th style="width: 50px; text-align: center; color: white;">No</th>
+                        <th style="width: 250px; color: white;">Item & Vibes Pengeluaran</th>
+                        <th style="width: 120px; color: white;">Kategori</th>
+                        <th style="width: 150px; text-align: right; color: white;">Damage (Rupiah)</th>
+                    </tr>
+            `;
+
+            budgetItems.forEach((item, index) => {
+                const bg = index % 2 === 0 ? rowBgEven : rowBgOdd;
+                html += `
+                    <tr style="background-color: ${bg};">
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td style="font-weight: 500;">${item.name}</td>
+                        <td>${item.category}</td>
+                        <td style="text-align: right; font-weight: bold; color: #0f172a;">Rp ${item.amount.toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
+            });
+
+            const total = budgetItems.reduce((acc, curr) => acc + curr.amount, 0);
+            html += `
+                    <tr>
+                        <td colspan="3" class="total-label" style="padding: 12px; border: ${borderStyle};">Total Damage (Pengeluaran)</td>
+                        <td class="total-value" style="padding: 12px; border: ${borderStyle}; font-size: 14px;">Rp ${total.toLocaleString('id-ID')}</td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+            `;
+
+            const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Healing_Budget_Gen_Z.xls");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showModal(
+                "Excel Estetik Terunduh! 💅✨",
+                "File 'Healing_Budget_Gen_Z.xls' berhasil dibuat dan diunduh. Dilengkapi dengan template desain ungu-fuchsia menawan, borders rapi, gridlines, dan penataan kolom otomatis yang sinkron dengan estetika aplikasi!"
+            );
+        }
+
+        // ✨ TAB SYSTEM MANAGER FOR GEMINI AI HUB ✨
+        function switchAITab(tabName) {
+            const tabs = ['roast', 'planner', 'bargain', 'washare'];
+            tabs.forEach(tab => {
+                const btn = document.getElementById(`tab-${tab}-btn`);
+                const content = document.getElementById(`tab-${tab}-content`);
+                if (tab === tabName) {
+                    btn.classList.add('border-white');
+                    btn.classList.remove('border-transparent', 'opacity-60');
+                    content.classList.remove('hidden');
+                } else {
+                    btn.classList.remove('border-white');
+                    btn.classList.add('border-transparent', 'opacity-60');
+                    content.classList.add('hidden');
+                }
+            });
+        }
+
+        // ✨ IMPLEMENTASI GEMINI API LLM FUNCTION ✨
+        async function fetchGeminiAIResponse(payload, retries = 5, delay = 1000) {
+            const apiKey = ""; 
+            let targetModel = payload.model || "gemini-2.5-flash-preview-09-2025";
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${apiKey}`;
+
+            for (let i = 0; i < retries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (e) {
+                    // Try again with backoff
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+            throw new Error("Gagal tersambung ke Gemini AI setelah beberapa percobaan. Silakan coba sesaat lagi!");
+        }
+
+        // AI Trip Planner Auto-Generator
+        async function generateAITripPlan() {
+            const promptInput = document.getElementById('trip-prompt').value.trim();
+            if (!promptInput) {
+                showModal("Input Kosong! ⚠️", "Ketikkan dulu rencana liburan impianmu (Contoh: 'Backpacker Yogyakarta 3 hari 2 malam').", true);
+                return;
+            }
+
+            const btn = document.getElementById('ai-planner-btn');
+            const originalBtnHTML = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-pulse">🤖 Merancang Rencana AI...</span>`;
+
+            const systemPrompt = "Kamu adalah perancang budget liburan anak muda (Gen Z) Indonesia yang andal. Hasilkan daftar rencana pengeluaran yang masuk akal, lengkap dengan perkiraan harga rupiah (IDR). Kategori yang diizinkan hanya: 'Transport', 'Akomodasi', 'Konsumsi', 'Hiburan', 'Lainnya'. Pastikan nama pengeluaran menggunakan bahasa gaul kekinian, kreatif, dan asyik khas Gen Z.";
+            const userPrompt = `Buatkan rencana pengeluaran terperinci untuk perjalanan: "${promptInput}". Buat minimal 5-7 item pengeluaran penting. Kembalikan data dalam format JSON sesuai schema yang ditentukan.`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: userPrompt }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            items: {
+                                type: "ARRAY",
+                                description: "Daftar pengeluaran liburan",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        name: { type: "STRING", description: "Nama item pengeluaran bergaya gaul Gen Z" },
+                                        category: { type: "STRING", enum: ["Transport", "Akomodasi", "Konsumsi", "Hiburan", "Lainnya"], description: "Kategori utama item" },
+                                        amount: { type: "NUMBER", description: "Perkiraan nominal rupiah riil untuk item tersebut" }
+                                    },
+                                    required: ["name", "category", "amount"]
+                                }
+                            }
+                        },
+                        required: ["items"]
+                    }
+                },
+                model: "gemini-2.5-flash-preview-09-2025"
+            };
+
+            try {
+                const data = await fetchGeminiAIResponse(payload);
+                const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!textResponse) throw new Error("Respons AI kosong.");
+
+                const parsedData = JSON.parse(textResponse);
+                if (parsedData && Array.isArray(parsedData.items)) {
+                    budgetItems = parsedData.items.map((item, index) => ({
+                        id: index + 1,
+                        name: item.name,
+                        category: item.category,
+                        amount: item.amount
+                    }));
+
+                    renderTable();
+                    calculateBudget();
+
+                    showModal("Rencana AI Siap! 🎉", `Berhasil menyusun ${budgetItems.length} rencana pengeluaran kreatif untuk liburanmu dari Gemini AI. Silakan kustomisasi lagi nominalnya!`);
+                } else {
+                    throw new Error("Format JSON tidak valid.");
+                }
+            } catch (error) {
+                console.error(error);
+                showModal("AI Terkendala 🚨", "Gagal menyusun rincian rencana otomatis. Silakan coba kembali sesaat lagi.", true);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Buat Budget Otomatis ✨</span>`;
+            }
+        }
+
+        // AI Vibe Check Advisor
+        async function getAIVibeCheck() {
+            const btn = document.getElementById('ai-btn');
+            const style = document.getElementById('ai-style').value;
+            const container = document.getElementById('ai-response-container');
+            const output = document.getElementById('ai-output');
+
+            // Hentikan suara jika sedang memutar suara sebelumnya
+            if (isPlayingAudio && currentAudioSource) {
+                try { currentAudioSource.stop(); } catch(e) {}
+                currentAudioSource = null;
+                isPlayingAudio = false;
+                updateSpeakButtonState(false);
+            }
+
+            const total = budgetItems.reduce((acc, curr) => acc + curr.amount, 0);
+            const limit = Number(document.getElementById('budget-limit').value) || 0;
+            const itemsSummary = budgetItems.map(item => `- ${item.name} (${item.category}): Rp ${item.amount.toLocaleString('id-ID')}`).join('\n');
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-pulse">Sedang Menghitung Karma Finansial... ⏳</span>`;
+            container.classList.remove('hidden');
+            output.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-4 space-y-2">
+                    <div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-[10px] uppercase tracking-wider animate-pulse text-purple-200">Gemini sedang menatap saldo rekeningmu...</p>
+                </div>
+            `;
+
+            const systemPrompt = "Kamu adalah asisten keuangan pribadi khusus Gen Z yang humoris, menggunakan bahasa gaul kekinian Indonesia (seperti 'hype', 'damage', 'healing', 'menyala abangku', 'fomo', 'yolo', 'riil', 'no cap', 'bjir', 'starboy'). Kamu pandai menilai keuangan secara kritis tapi seru. Jangan gunakan format markdown yang tebal berlebihan atau list yang kaku. Jawablah langsung secara to-the-point dan estetis.";
+            
+            let personalityInst = "";
+            if (style === 'roast') {
+                personalityInst = "Berikan 'Roast Pedas' yang sarkas, pedas, kocak, dan tanpa filter mengenai kebiasaan pengeluaran mereka ini. Buat mereka sadar dengan humor kejam.";
+            } else if (style === 'bestie') {
+                personalityInst = "Berikan respon gaya 'Bestie Penyemangat' yang hangat, penuh emoji lucu, menyemangati mereka untuk tetap liburan tapi memberikan nasehat manis agar tidak jatuh miskin.";
+            } else {
+                personalityInst = "Berikan respon 'Penasihat Bijak' yang logis, dewasa, berbobot, tapi tetap santai dengan pembawaan anak muda yang keren.";
+            }
+
+            const userPrompt = `
+Berikut data budget liburan saya:
+- Batas Aman Dompet (Limit): Rp ${limit.toLocaleString('id-ID')}
+- Total Damage Saat Ini: Rp ${total.toLocaleString('id-ID')}
+- Daftar Pengeluaran:
+${itemsSummary}
+
+Tolong berikan:
+1. **Financial Vibe Check** (Rating kondisi budget saya dalam 1 kata/frasa gaul)
+2. **Ulasan Kamu (${style})**: ${personalityInst}
+3. **3 Solusi Instan Anti-Bokek** (Saran hemat cerdas yang spesifik berdasarkan item di atas agar budget saya muat!)
+`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: userPrompt }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                model: "gemini-2.5-flash-preview-09-2025"
+            };
+
+            try {
+                const data = await fetchGeminiAIResponse(payload);
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "Yah, Gemini lagi bengong. Coba klik tombolnya lagi ya!";
+                output.innerHTML = text.replace(/\n/g, '<br>');
+            } catch (error) {
+                output.innerHTML = `<span class="text-red-200 font-semibold">Gagal memuat vibe check. Koneksi lagi sibuk atau API key sedang disiapkan. Coba lagi, ya!</span>`;
+                showModal("Koneksi Error 🚨", error.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Vibe Check Budgetku ✨</span>`;
+            }
+        }
+
+        // ✨ NEW FEATURE: AI Bargain Simulator (Tawar-Menawar Harga) ✨
+        let activeBargainItem = null;
+        let lastSuggestedPrice = 0;
+
+        async function negotiateWithAI() {
+            const select = document.getElementById('bargain-item-select');
+            const userMsg = document.getElementById('bargain-message').value.trim();
+            const btn = document.getElementById('bargain-btn');
+            const chatContainer = document.getElementById('bargain-chat-container');
+            const moodLabel = document.getElementById('bargain-vendor-mood');
+            const priceLabel = document.getElementById('bargain-new-price-label');
+            const replyLabel = document.getElementById('bargain-reply');
+            const applyBtn = document.getElementById('apply-bargain-btn');
+
+            if (!userMsg) {
+                showModal("Tawaran Kosong! ⚠️", "Masukkan alasan atau kalimat tawarmu terlebih dahulu.", true);
+                return;
+            }
+
+            const selectedId = Number(select.value);
+            const item = budgetItems.find(i => i.id === selectedId);
+            if (!item) return;
+
+            activeBargainItem = item;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-pulse">🤝 Sedang Nego...</span>`;
+            chatContainer.classList.remove('hidden');
+            replyLabel.innerText = "Pemilik sedang menimbang tawaranmu...";
+            applyBtn.classList.add('hidden');
+
+            const systemPrompt = `Kamu adalah seorang vendor lokal Indonesia yang menyewakan barang/jasa atau menjual makanan (seperti supir rental, pemilik penginapan, pemilik rumah makan). Karaktermu agak pelit tapi juga butuh uang. Kamu menanggapi tawar-menawar dari seorang mahasiswa atau anak muda (Gen Z). Responlah dengan dialek bahasa lokal Indonesia yang kocak dan asyik. Tentukan apakah kamu menerima tawaran harga barunya, memberikan penawaran tengah (middle-ground), atau menolak mentah-mentah jika tawarannya terlalu ekstrem. Kembalikan data dalam format JSON saja.`;
+
+            const userPrompt = `
+Item pengeluaran: "${item.name}"
+Kategori: "${item.category}"
+Harga Asli Saat Ini: Rp ${item.amount}
+Kalimat tawar-menawar dari pelanggan: "${userMsg}"
+
+Berikan respons dalam format JSON dengan properti:
+1. "reply" (Teks jawaban langsung kamu dengan logat lokal/gaul yang lucu)
+2. "newAmount" (Nominal angka rupiah yang kamu setujui. Jika menolak/tetap, kembalikan harga asli saat ini. Jika memberi diskon, tentukan angka baru di bawah harga asli namun masuk akal)
+3. "mood" (Frasa singkat penanda suasana hatimu saat ini, misal: 'Mulai Tergoda', 'Kesal Sadis', 'Pasrah Tapi Ikhlas', 'Tertawa Geli')
+4. "success" (Boolean true jika kamu memberikan harga lebih rendah dari harga asli saat ini, false jika menolak diskon)
+`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: userPrompt }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            reply: { type: "STRING" },
+                            newAmount: { type: "NUMBER" },
+                            mood: { type: "STRING" },
+                            success: { type: "BOOLEAN" }
+                        },
+                        required: ["reply", "newAmount", "mood", "success"]
+                    }
+                },
+                model: "gemini-2.5-flash-preview-09-2025"
+            };
+
+            try {
+                const data = await fetchGeminiAIResponse(payload);
+                const textResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!textResponse) throw new Error("Respons AI kosong.");
+
+                const res = JSON.parse(textResponse);
+                moodLabel.innerText = `Mood: ${res.mood}`;
+                replyLabel.innerText = `"${res.reply}"`;
+
+                if (res.success && res.newAmount < item.amount) {
+                    lastSuggestedPrice = res.newAmount;
+                    priceLabel.innerText = `Tawaran Baru: ${formatIDR(res.newAmount)}`;
+                    applyBtn.classList.remove('hidden');
+                    applyBtn.classList.add('flex');
+                } else {
+                    priceLabel.innerText = `Harga Tetap`;
+                    applyBtn.classList.add('hidden');
+                }
+            } catch (e) {
+                console.error(e);
+                replyLabel.innerText = "Aduh, penjualnya lagi sibuk ngitung kembalian. Coba tawar lagi ya!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Tawar Harga AI ✨</span>`;
+            }
+        }
+
+        // Apply negotiated price back to the sheet
+        function applyBargainPrice() {
+            if (activeBargainItem && lastSuggestedPrice > 0) {
+                const oldPrice = activeBargainItem.amount;
+                activeBargainItem.amount = lastSuggestedPrice;
+                renderTable();
+                calculateBudget();
+                
+                showModal(
+                    "Nego Deal! 🤝✨",
+                    `Berhasil menghemat anggaran! Harga item "${activeBargainItem.name}" diturunkan dari ${formatIDR(oldPrice)} menjadi ${formatIDR(lastSuggestedPrice)}.`
+                );
+                
+                // Reset bargain container
+                document.getElementById('bargain-chat-container').classList.add('hidden');
+                document.getElementById('bargain-message').value = '';
+                activeBargainItem = null;
+                lastSuggestedPrice = 0;
+            }
+        }
+
+        // ✨ NEW FEATURE: AI WA Split-Bill Draft (Tagih Bestie) ✨
+        async function generateWAShareDraft() {
+            const people = Number(document.getElementById('split-people').value) || 1;
+            const tripName = document.getElementById('split-trip-name').value.trim() || "Rombongan Healing";
+            const btn = document.getElementById('washare-btn');
+            const container = document.getElementById('washare-container');
+            const textarea = document.getElementById('washare-text');
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-pulse">💬 Menulis Draf WA...</span>`;
+            container.classList.remove('hidden');
+            textarea.value = "Menyusun draf sindiran tagihan patungan...";
+
+            const total = budgetItems.reduce((acc, curr) => acc + curr.amount, 0);
+            const itemsSummary = budgetItems.map(item => `- ${item.name}: Rp ${item.amount.toLocaleString('id-ID')}`).join('\n');
+
+            const systemPrompt = "Kamu adalah ketua rombongan trip anak muda (Gen Z) Indonesia yang bertugas menagih uang patungan (split bill) ke grup WhatsApp. Tulis draf pesan WhatsApp yang sangat humoris, penuh satire persahabatan, akrab, menggunakan banyak emoji, bahasa gaul estetik, rincian hitung-hitungan total dana, pembagian per orang secara akurat, dan nomor rekening fiktif kocak.";
+            
+            const userPrompt = `
+Data Trip kita:
+- Nama Trip/Grup: "${tripName}"
+- Jumlah Anggota Patungan: ${people} orang
+- Total Pengeluaran Seluruhnya: Rp ${total}
+- Rincian Pengeluaran:
+${itemsSummary}
+
+Tolong hitung total dibagi ${people} orang, lalu tulis draf pesan WhatsApp tagihan yang sangat lucu, persuasif, kocak, menggunakan bahasa anak Jaksel/gaul terkini agar mereka langsung transfer tanpa drama!
+`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: userPrompt }]
+                }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                model: "gemini-2.5-flash-preview-09-2025"
+            };
+
+            try {
+                const data = await fetchGeminiAIResponse(payload);
+                const draftText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Gagal membuat draf pesan.";
+                textarea.value = draftText;
+            } catch (e) {
+                console.error(e);
+                textarea.value = "Koneksi terputus saat memanggil asisten WA. Coba buat draf lagi ya!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>Buat Draf Pesan WA ✨</span>`;
+            }
+        }
+
+        // Copy generated WA text to clipboard
+        function copyWAText() {
+            const textarea = document.getElementById('washare-text');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // Mobile compatibility
+
+            try {
+                // Clipboard fallback as per system instructions
+                document.execCommand('copy');
+                showModal("Draf Tersalin! 📋✨", "Pesan tagihan patungan sudah disalin ke clipboard. Tinggal copas ke grup WhatsApp bestie-mu!");
+            } catch (err) {
+                console.error("Gagal menyalin text", err);
+            }
+        }
+
+        // Play Audio Voice (Decodes raw PCM 16-bit Big-Endian directly via Web Audio API)
+        let audioCtx = null;
+        let currentAudioSource = null;
+        let isPlayingAudio = false;
+
+        async function speakAIResponse() {
+            const textElement = document.getElementById('ai-output');
+            let textToRead = textElement.innerText || textElement.textContent;
+            
+            // Bersihkan teks dari markdown dan emoji berlebih
+            textToRead = textToRead.replace(/\*+/g, '')
+                                  .replace(/🌶️|💖|🧠|😎|🫣|🍜|😭|🚨/g, '')
+                                  .trim();
+
+            if (!textToRead || textToRead.includes("sedang menatap saldo")) {
+                showModal("Belum Ada Teks! ⚠️", "Kamu harus jalankan 'Vibe Check Budgetku' terlebih dahulu sebelum mendengarkan suara AI.", true);
+                return;
+            }
+
+            // Jika sedang diputar, lakukan stop
+            if (isPlayingAudio && currentAudioSource) {
+                try {
+                    currentAudioSource.stop();
+                } catch(e) {}
+                currentAudioSource = null;
+                isPlayingAudio = false;
+                updateSpeakButtonState(false);
+                return;
+            }
+
+            const chosenVoice = document.getElementById('voice-select').value;
+            updateSpeakButtonState(true, "Mempersiapkan Suara... 🎙️");
+
+            const userPrompt = `Say in Indonesian with a natural youth tone based on the selected persona character: ${textToRead.substring(0, 450)}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: userPrompt }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: {
+                                voiceName: chosenVoice
+                            }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            try {
+                const data = await fetchGeminiAIResponse(payload);
+                const base64Data = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+                const mimeType = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.mimeType || "audio/L16;rate=24000";
+
+                if (!base64Data) {
+                    throw new Error("Gagal memuat audio biner dari Gemini.");
+                }
+
+                // Ekstrak sample rate
+                let sampleRate = 24000;
+                const rateMatch = /rate=(\d+)/.exec(mimeType);
+                if (rateMatch) {
+                    sampleRate = parseInt(rateMatch[1], 10);
+                }
+
+                // Inisialisasi AudioContext (Browser Policy-safe)
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
+
+                // Dekode Base64 ke dalam Uint8Array
+                const binaryString = window.atob(base64Data);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                // Dekode PCM 16-bit Big Endian (L16) langsung ke Float32Array [-1.0, 1.0]
+                const numSamples = len / 2;
+                const float32Data = new Float32Array(numSamples);
+                const dataView = new DataView(bytes.buffer);
+
+                for (let i = 0; i < numSamples; i++) {
+                    const pcm16 = dataView.getInt16(i * 2, false);
+                    float32Data[i] = pcm16 / 32768.0; 
+                }
+
+                // Buat Buffer AudioContext
+                const audioBuffer = audioCtx.createBuffer(1, numSamples, sampleRate);
+                audioBuffer.getChannelData(0).set(float32Data);
+
+                // Buat Buffer Source dan Putar
+                const source = audioCtx.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioCtx.destination);
+                
+                currentAudioSource = source;
+                isPlayingAudio = true;
+                updateSpeakButtonState(true, "Memutar Suara AI... 🎵");
+                
+                source.start(0);
+                source.onended = () => {
+                    if (currentAudioSource === source) {
+                        isPlayingAudio = false;
+                        currentAudioSource = null;
+                        updateSpeakButtonState(false);
+                    }
+                };
+
+            } catch (error) {
+                console.error(error);
+                showModal("TTS Terkendala 🚨", "Gagal mendekode suara ke audio browser. Coba sekali lagi!", true);
+                updateSpeakButtonState(false);
+                isPlayingAudio = false;
+            }
+        }
+
+        // Update UI state tombol pembaca suara
+        function updateSpeakButtonState(isPlaying, customText = "") {
+            const textBtn = document.getElementById('speak-text');
+            const iconBtn = document.getElementById('speak-icon');
+            const btn = document.getElementById('speak-btn');
+
+            if (isPlaying) {
+                iconBtn.innerText = "🛑";
+                textBtn.innerText = customText || "Hentikan Suara";
+                btn.classList.add("bg-red-500/30", "hover:bg-red-500/40");
+                btn.classList.remove("bg-white/25", "hover:bg-white/35");
+            } else {
+                iconBtn.innerText = "🔊";
+                textBtn.innerText = "Dengerin Suara AI ✨";
+                btn.classList.add("bg-white/25", "hover:bg-white/35");
+                btn.classList.remove("bg-red-500/30", "hover:bg-red-500/40");
+            }
+        }
+
+        // Initialize App on Window Load
+        window.onload = function() {
+            renderTable();
+            calculateBudget();
+            newQuote();
+        }
+    </script>
+</body>
+</html>
